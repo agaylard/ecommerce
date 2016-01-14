@@ -428,6 +428,12 @@ LANGUAGE_COOKIE_NAME = 'ecommerce_language'
 # configured for the ecommerce worker!
 BROKER_URL = None
 
+# Use heartbeats to prevent broker connection loss. When the broker
+# is behind a load balancer, the load balancer may timeout Celery's
+# connection to the broker, causing messages to be lost.
+BROKER_HEARTBEAT = 10.0
+BROKER_HEARTBEAT_CHECKRATE = 2
+
 # A sequence of modules to import when the worker starts.
 # See http://celery.readthedocs.org/en/latest/configuration.html#celery-imports.
 CELERY_IMPORTS = (
