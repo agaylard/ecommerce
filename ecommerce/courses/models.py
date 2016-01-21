@@ -148,10 +148,9 @@ class Course(models.Model):
                 attribute_values__value_text=credit_provider
             )
 
+        seats =  self.seat_products.filter(certificate_type_query)
         try:
-            seat = self.seat_products.filter(
-                certificate_type_query
-            ).filter(
+            seat = seats.filter(
                 id_verification_required_query
             ).get(
                 credit_provider_query
@@ -164,6 +163,7 @@ class Course(models.Model):
             )
         except Product.DoesNotExist:
             seat = Product()
+
             logger.info(
                 'Course seat product with certificate type [%s] for [%s] does not exist. Instantiated a new instance.',
                 certificate_type,
@@ -213,5 +213,11 @@ class Course(models.Model):
         # TODO Expose via setting
         stock_record.price_currency = 'USD'
         stock_record.save()
+
+        if self.certificate_type_for_mode(certificate_type) == 'professional':
+            for single_seat in seats:
+                if seat.attr.id_verification_required != single_seat.attr.id_verification_required:
+                    if single_seat.line_set.count() == 0:
+                        single_seat.delete()
 
         return seat
