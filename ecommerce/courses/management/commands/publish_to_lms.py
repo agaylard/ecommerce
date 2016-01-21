@@ -37,9 +37,11 @@ class Command(BaseCommand):
         if not course_ids_file or not os.path.exists(course_ids_file):
             raise CommandError("Pass the correct absolute path to course ids file as --course_ids_file argument.")
 
-        with open(course_ids_file, 'r') as course_ids:
+        with open(course_ids_file, 'r') as file_handler:
+            course_ids = file_handler.readlines()
+            total_courses = len(course_ids)
+            logger.info("Publishing %s course(s) through management command.", total_courses)
             for course_id in course_ids:
-                total_courses += 1
                 try:
                     course_id = course_id.strip()
                     course = Course.objects.get(id=course_id)

@@ -59,11 +59,20 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
         expected = (
             (
                 LOGGER_NAME,
+                "INFO",
+                "Publishing 1 course(s) through management command."
+            ),
+            (
+                LOGGER_NAME,
                 "ERROR",
                 u"Error in publishing course {} through management command.\tError detail: The course {} does not "
                 u"exist.\n".format(fake_course_id, fake_course_id)
             ),
-            (LOGGER_NAME, "ERROR", "Management Command: 1 course(s) failed out of 1."),
+            (
+                LOGGER_NAME,
+                "ERROR",
+                "Management Command: 1 course(s) failed out of 1."
+            )
         )
         with LogCapture(LOGGER_NAME) as lc:
             call_command('publish_to_lms', course_ids_file=self.tmp_file_path)
@@ -75,6 +84,11 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
         second_course = CourseFactory.create()
         self.create_course_ids_file(self.tmp_file_path, [self.course.id, second_course.id])
         expected = (
+            (
+                LOGGER_NAME,
+                "INFO",
+                "Publishing 2 course(s) through management command."
+            ),
             (
                 LOGGER_NAME,
                 "INFO",
@@ -105,6 +119,11 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
         expected = (
             (
                 LOGGER_NAME,
+                "INFO",
+                "Publishing 1 course(s) through management command."
+            ),
+            (
+                LOGGER_NAME,
                 "ERROR",
                 u"Error in publishing course {} through management command.\tError detail: {}\n".format(
                     self.course.id, error_msg)
@@ -127,6 +146,11 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
         unicode_file = os.path.join(tempfile.gettempdir(), u"اول.txt")
         self.create_course_ids_file(unicode_file, [self.course.id])
         expected = (
+            (
+                LOGGER_NAME,
+                "INFO",
+                "Publishing 1 course(s) through management command."
+            ),
             (
                 LOGGER_NAME,
                 "INFO",
