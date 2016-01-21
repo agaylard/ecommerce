@@ -46,15 +46,17 @@ class Command(BaseCommand):
                     publishing_error = course.publish_to_lms()
                     if publishing_error:
                         failed += 1
-                        logger.error(u"%s\t%s\n", course_id, publishing_error)
+                        logger.error(
+                            u"Error in publishing course %s through management command.\tError detail: %s\n",
+                            course_id, publishing_error)
                     else:
-                        msg = "The course published successfully."
-                        logger.info(u"%s\t%s\n", course_id, msg)
+                        logger.info(u"The course %s published successfully through management command.\n", course_id)
                 except Course.DoesNotExist:
                     failed += 1
-                    msg = u"The course {} does not exist.".format(course_id)
-                    logger.error(u"%s\t%s\n", course_id, msg)
+                    logger.error(
+                        u"Error in publishing course %s through management command.\tError detail: The course %s does "
+                        u"not exist.\n", course_id, course_id)
         if failed:
-            logger.error("%s course(s) failed out of %s.", failed, total_courses)
+            logger.error("Management Command: %s course(s) failed out of %s.", failed, total_courses)
         else:
-            logger.info("All courses published successfully.")
+            logger.info("Management Command: All %s course(s) published successfully.", total_courses)

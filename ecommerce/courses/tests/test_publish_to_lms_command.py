@@ -56,10 +56,14 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
 
         fake_course_id = "fake_course_id"
         self.create_course_ids_file(self.tmp_file_path, [fake_course_id])
-        msg = u"The course {course_id} does not exist.".format(course_id=fake_course_id)
         expected = (
-            (LOGGER_NAME, 'ERROR', u"{course_id}\t{msg}\n".format(course_id=fake_course_id, msg=msg)),
-            (LOGGER_NAME, 'ERROR', "1 course(s) failed out of 1."),
+            (
+                LOGGER_NAME,
+                "ERROR",
+                u"Error in publishing course {} through management command.\tError detail: The course {} does not "
+                u"exist.\n".format(fake_course_id, fake_course_id)
+            ),
+            (LOGGER_NAME, "ERROR", "Management Command: 1 course(s) failed out of 1."),
         )
         with LogCapture(LOGGER_NAME) as lc:
             call_command('publish_to_lms', course_ids_file=self.tmp_file_path)
@@ -71,9 +75,20 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
         second_course = CourseFactory.create()
         self.create_course_ids_file(self.tmp_file_path, [self.course.id, second_course.id])
         expected = (
-            (LOGGER_NAME, 'INFO', u'{}\tThe course published successfully.\n'.format(self.course.id)),
-            (LOGGER_NAME, 'INFO', u'{}\tThe course published successfully.\n'.format(second_course.id)),
-            (LOGGER_NAME, 'INFO', u'All courses published successfully.')
+            (
+                LOGGER_NAME,
+                "INFO",
+                u"The course {} published successfully through management command.\n".format(self.course.id)
+            ),
+            (
+                LOGGER_NAME,
+                "INFO",
+                u"The course {} published successfully through management command.\n".format(second_course.id)),
+            (
+                LOGGER_NAME,
+                "INFO",
+                "Management Command: All 2 course(s) published successfully."
+            )
         )
         with mock.patch.object(Course, 'publish_to_lms', autospec=True) as mock_publish:
             mock_publish.return_value = None
@@ -88,8 +103,17 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
 
         error_msg = "The failure message."
         expected = (
-            (LOGGER_NAME, 'ERROR', u"{course_id}\t{msg}\n".format(course_id=self.course.id, msg=error_msg)),
-            (LOGGER_NAME, 'ERROR', "1 course(s) failed out of 1."),
+            (
+                LOGGER_NAME,
+                "ERROR",
+                u"Error in publishing course {} through management command.\tError detail: {}\n".format(
+                    self.course.id, error_msg)
+            ),
+            (
+                LOGGER_NAME,
+                "ERROR",
+                "Management Command: 1 course(s) failed out of 1."
+            )
         )
         with mock.patch.object(Course, 'publish_to_lms') as mock_publish:
             mock_publish.return_value = error_msg
@@ -100,12 +124,19 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
 
     def test_unicode_file_name(self):
         """ Verify the unicode files name are read correctly."""
-        unicode_file_name = u"اول.txt"
-        unicode_file = os.path.join(tempfile.gettempdir(), unicode_file_name)
+        unicode_file = os.path.join(tempfile.gettempdir(), u"اول.txt")
         self.create_course_ids_file(unicode_file, [self.course.id])
         expected = (
-            (LOGGER_NAME, 'INFO', u'{}\tThe course published successfully.\n'.format(self.course.id)),
-            (LOGGER_NAME, 'INFO', u'All courses published successfully.')
+            (
+                LOGGER_NAME,
+                "INFO",
+                u"The course {} published successfully through management command.\n".format(self.course.id)
+            ),
+            (
+                LOGGER_NAME,
+                "INFO",
+                "Management Command: All 1 course(s) published successfully."
+            )
         )
         with mock.patch.object(Course, 'publish_to_lms') as mock_publish:
             mock_publish.return_value = None
@@ -114,4 +145,4 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
                 lc.check(*expected)
 
         mock_publish.assert_called_once_with()
-        os.remove(unicode_file_name)
+        os.remove(unicode_file)
