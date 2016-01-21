@@ -59,6 +59,6 @@ class Command(BaseCommand):
                         u"Error in publishing course %s through management command.\tError detail: The course %s does "
                         u"not exist.\n", course_id, course_id)
         if failed:
-            logger.error("Management Command: %s course(s) failed out of %s.", failed, total_courses)
+            logger.error("%s course(s) failed out of %s.", failed, total_courses)
         else:
-            logger.info("Management Command: All %s course(s) published successfully.", total_courses)
+            logger.info("All %s course(s) published successfully.", total_courses)

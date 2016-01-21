@@ -71,7 +71,7 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
             (
                 LOGGER_NAME,
                 "ERROR",
-                "Management Command: 1 course(s) failed out of 1."
+                "1 course(s) failed out of 1."
             )
         )
         with LogCapture(LOGGER_NAME) as lc:
@@ -101,7 +101,7 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
             (
                 LOGGER_NAME,
                 "INFO",
-                "Management Command: All 2 course(s) published successfully."
+                "All 2 course(s) published successfully."
             )
         )
         with mock.patch.object(Course, 'publish_to_lms', autospec=True) as mock_publish:
@@ -131,7 +131,7 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
             (
                 LOGGER_NAME,
                 "ERROR",
-                "Management Command: 1 course(s) failed out of 1."
+                "1 course(s) failed out of 1."
             )
         )
         with mock.patch.object(Course, 'publish_to_lms') as mock_publish:
@@ -159,7 +159,7 @@ class PublishCoursesToLMSTests(CourseCatalogTestMixin, TransactionTestCase):
             (
                 LOGGER_NAME,
                 "INFO",
-                "Management Command: All 1 course(s) published successfully."
+                "All 1 course(s) published successfully."
             )
         )
         with mock.patch.object(Course, 'publish_to_lms') as mock_publish:
