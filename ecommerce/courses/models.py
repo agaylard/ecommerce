@@ -163,7 +163,6 @@ class Course(models.Model):
             )
         except Product.DoesNotExist:
             seat = Product()
-
             logger.info(
                 'Course seat product with certificate type [%s] for [%s] does not exist. Instantiated a new instance.',
                 certificate_type,
@@ -217,6 +216,7 @@ class Course(models.Model):
         if self.certificate_type_for_mode(certificate_type) == 'professional':
             for single_seat in seats:
                 if seat.attr.id_verification_required != single_seat.attr.id_verification_required:
+                    # no orders associated
                     if single_seat.line_set.count() == 0:
                         single_seat.delete()
 
